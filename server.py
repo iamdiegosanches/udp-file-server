@@ -3,62 +3,81 @@ import threading
 import os
 import json
 
-HOST = '200.239.153.138'  # Localhost
-PORT = 2003        # Port to listen on
+HOST = 'ip'
+PORT = 2003
+BUFFER_SIZE = 1024 * 5
+UPLOAD_PASSWORD = "senha"
+FILES_DIR = "files" # alterar isso aqui
+
+os.makedirs(FILES_DIR, exist_ok=True)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-try:
-    s.bind((HOST, PORT))
-except socket.error as e:
-    print("Erro: ", e)
-
-print("Server waiting connections...")
-
-idCount = 0
-
-def threaded_client(conn, user):
-    global idCount
-
-    while True:
-        try:
-            pass
-        except:
-            pass
-
-def read_names_files(path):
+def list_files():
     try:
-        file_names = os.listdir(path)
-        file_names = dict(enumerate(file_names))
-        return file_names
-    except FileNotFoundError:
-        print(f"Error: Folder {path} not found")
+        return dict(enumerate(os.listdir(FILES_DIR)))
+    except Exception as e:
+        print("Erro ao ler arquivos: ", e)
         return {}
 
-def send_file(index, addr, buffer_size=1024*5):
-    file_names = read_names_files('files')
-    file = file_names.get(int(index))
-    if file:
-        with open(f'files/{file}', 'rb') as f:
-            while True:
-                data = f.read(buffer_size)
-                if not data:
-                    break
-                s.sendto(data, addr)
-    else:
-        print("Índice de arquivo inválido.")
+def send_file(index, addr, sock):
+    files = list_files()
+    name =  files.get(int(index))
 
+    if name:
+        sock.sendto(name.encode(), addr)
+
+        try:
+            with open(os.path.join(FILES_DIR, name), 'rb') as f:
+                while (chunk := f.read(BUFFER_SIZE)):
+                    sock.sendto(chunk, addr)
+            sock.sendto(chunk, addr)
+            print(f"[+] Arquivo '{name}' enviado para {addr}")
+        except Exception as e:
+            print("Erro ao abrir arquivo:", e)
+            sock.sendto(b"ERRO: Falha ao ler o arquivo.", addr)
+    else:
+        sock.sendto(b"ERRO: Indice invalido.", addr) # não pode enviar acento
+
+def recieve_file(nome, addr, sock):
+    try:
+        with open(os.path.join(FILES_DIR, nome), 'wb') as f:
+            while True:
+                data, _ = sock.recvfrom(BUFFER_SIZE)
+                if data == b"EOF":
+                    break
+                f.write(data)
+        print(f"[+] Arquivo '{nome}' recebido de {addr}")
+    except Exception as e:
+        print("Erro ao receber arquivo:", e)
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((HOST, PORT))
+print(f"[Servidor iniciado em {HOST}:{PORT}]")
 
 while True:
-    data, addr = s.recvfrom(1024)
-    data_decoded = data.decode('utf-8')
-    if data_decoded.startswith("Index: "):
-        index = data_decoded.split()[-1]
-        send_file(index, addr)
-    elif data_decoded.startswith("Solicitação de arquivos"):
-        print(f"Recebido de {addr}")
+    try:
+        data, addr = sock.recvfrom(1024)
+        msg = data.decode()
 
-        file_names = read_names_files('files')
+        if msg == "LISTAR":
+            arquivos = list_files()
+            sock.sendto(json.dumps(arquivos).encode(), addr)
 
-        response = json.dumps(file_names).encode('utf-8')
-        s.sendto(response, addr)
+        elif msg.startswith("DOWNLOAD"):
+            _, index = msg.split()
+            send_file(index, addr, sock)
+
+        elif msg.startswith("UPLOAD"):
+            _, senha, nome = msg.split(maxsplit=2)
+            if senha == UPLOAD_PASSWORD:
+                sock.sendto(b"OK", addr)
+                recieve_file(nome, addr, sock)
+            else:
+                sock.sendto(b"ERRO: Senha incorreta.", addr)
+
+        else:
+            sock.sendto(b"ERRO: Comando invalido.", addr)
+
+    except Exception as e:
+        print("[ERRO GERAL]", e)
