@@ -3,25 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <title>Enviar Arquivo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
-<body>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <ul>
-      {% for category, message in messages %}
-        <li style="color:{{ 'red' if category == 'error' else 'green' }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-  <h1>Upload de Arquivo</h1>
-  <form method="post" enctype="multipart/form-data">
-    <label for="senha">Senha:</label>
-    <input type="password" name="senha" required><br>
-    <label for="arquivo">Arquivo:</label>
-    <input type="file" name="arquivo" required><br><br>
-    <input type="submit" value="Enviar">
-  </form>
-  <a href="{{ url_for('index') }}">Voltar</a>
+<body class="section">
+  <div class="container">
+    <h1 class="title is-3 has-text-centered">📤 Upload de Arquivo</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="notification is-light">
+          {% for category, message in messages %}
+            <p class="has-text-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }}">
+              {{ message }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" enctype="multipart/form-data" class="box">
+      <div class="field">
+        <label class="label">Senha</label>
+        <div class="control">
+          <input class="input" type="password" name="senha" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Arquivo</label>
+        <div class="control">
+          <input class="input" type="file" name="arquivo" required>
+        </div>
+      </div>
+
+      <div class="field is-grouped is-grouped-right">
+        <div class="control">
+          <input type="submit" class="button is-primary" value="Enviar">
+        </div>
+      </div>
+    </form>
+
+    <div class="has-text-centered mt-4">
+      <a href="{{ url_for('index') }}" class="button is-light">
+        <i class="material-icons">arrow_back</i> Voltar
+      </a>
+    </div>
+  </div>
 </body>
 </html>

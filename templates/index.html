@@ -3,47 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <title>Servidor de Arquivos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    .file-icon {
+      vertical-align: middle;
+      margin-right: 8px;
+      color: #4a4a4a;
+    }
+    .table td, .table th {
+      vertical-align: middle;
+    }
+    .is-narrow {
+      white-space: nowrap;
+    }
+  </style>
 </head>
-<body>
-  <h1>Arquivos disponíveis</h1>
+<body class="section">
+  <div class="container">
+    <h1 class="title is-3 has-text-centered">📂 Arquivos Disponíveis</h1>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul>
-      {% for category, message in messages %}
-        <li style="color:
-            {% if category == 'error' %}red
-            {% elif category == 'success' %}green
-            {% elif category == 'info' %}blue
-            {% else %}black{% endif %}">
-          {{ message }}
-        </li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="notification is-light">
+          {% for category, message in messages %}
+            <p class="has-text-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }}">
+              {{ message }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
-  <ul>
-    {% for i, nome in arquivos.items() %}
-      <li>
-        {{ nome }}
-        <form action="{{ url_for('iniciar_download', index=i) }}" method="post" style="display:inline">
-          <button type="submit">Baixar</button>
-        </form>
-      </li>
-    {% endfor %}
-  </ul>
+    <div class="table-container">
+      <table class="table is-striped is-fullwidth is-hoverable">
+        <thead>
+          <tr>
+            <th>Arquivo</th>
+            <th class="has-text-centered">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i, nome in arquivos.items() %}
+            <tr>
+              <td>
+                <i class="material-icons file-icon">insert_drive_file</i>{{ nome }}
+              </td>
+              <td class="has-text-centered is-narrow">
+                <form action="{{ url_for('iniciar_download', index=i) }}" method="post">
+                  <button type="submit" class="button is-link is-small">Baixar</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-  {% if arquivo_para_baixar %}
-    <p>
-      <strong>Arquivo disponível para download:</strong><br>
-      <a href="{{ url_for('download', nome=arquivo_para_baixar) }}">
-        Clique aqui para baixar {{ arquivo_para_baixar }}
+    <div class="has-text-centered mt-5">
+      <a href="{{ url_for('upload') }}" class="button is-success is-medium">
+        <i class="material-icons mr-1">cloud_upload</i> Enviar novo arquivo
       </a>
-    </p>
-  {% endif %}
-
-
-  <a href="{{ url_for('upload') }}">Enviar novo arquivo</a>
+    </div>
+  </div>
 </body>
 </html>
