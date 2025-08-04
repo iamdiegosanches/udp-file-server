@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Enviar Arquivo</title>
+</head>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul>
+      {% for category, message in messages %}
+        <li style="color:{{ 'red' if category == 'error' else 'green' }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+  <h1>Upload de Arquivo</h1>
+  <form method="post" enctype="multipart/form-data">
+    <label for="senha">Senha:</label>
+    <input type="password" name="senha" required><br>
+    <label for="arquivo">Arquivo:</label>
+    <input type="file" name="arquivo" required><br><br>
+    <input type="submit" value="Enviar">
+  </form>
+  <a href="{{ url_for('index') }}">Voltar</a>
+</body>
+</html>

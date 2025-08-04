@@ -22,7 +22,7 @@ def list_files():
 
 def send_file(index, addr, sock):
     files = list_files()
-    name =  files.get(int(index))
+    name = files.get(int(index))
 
     if name:
         sock.sendto(name.encode(), addr)
@@ -31,23 +31,28 @@ def send_file(index, addr, sock):
             with open(os.path.join(FILES_DIR, name), 'rb') as f:
                 while (chunk := f.read(BUFFER_SIZE)):
                     sock.sendto(chunk, addr)
-            sock.sendto(chunk, addr)
+
+            sock.sendto(b"EOF", addr)
             print(f"[+] Arquivo '{name}' enviado para {addr}")
         except Exception as e:
             print("Erro ao abrir arquivo:", e)
             sock.sendto(b"ERRO: Falha ao ler o arquivo.", addr)
     else:
-        sock.sendto(b"ERRO: Indice invalido.", addr) # não pode enviar acento
+        sock.sendto(b"ERRO: Indice invalido.", addr)
 
 def recieve_file(nome, addr, sock):
     try:
         with open(os.path.join(FILES_DIR, nome), 'wb') as f:
-            while True:
-                data, _ = sock.recvfrom(BUFFER_SIZE)
-                if data == b"EOF":
-                    break
-                f.write(data)
-        print(f"[+] Arquivo '{nome}' recebido de {addr}")
+            try: 
+                while True:
+                    data, _ = sock.recvfrom(BUFFER_SIZE)
+                    print(data)
+                    if data == b"EOF":
+                        break
+                    f.write(data)
+            except Exception as e:
+                print(f"Error: {e}")
+        print(f"\n[+] Arquivo '{nome}' recebido de {addr}")
     except Exception as e:
         print("Erro ao receber arquivo:", e)
 
@@ -69,10 +74,10 @@ while True:
             send_file(index, addr, sock)
 
         elif msg.startswith("UPLOAD"):
-            _, senha, nome = msg.split(maxsplit=2)
-            if senha == UPLOAD_PASSWORD:
+            _, passwd, name = msg.split(maxsplit=2)
+            if passwd == UPLOAD_PASSWORD:
                 sock.sendto(b"OK", addr)
-                recieve_file(nome, addr, sock)
+                recieve_file(name, addr, sock)
             else:
                 sock.sendto(b"ERRO: Senha incorreta.", addr)
 

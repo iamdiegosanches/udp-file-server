@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Servidor de Arquivos</title>
+</head>
+<body>
+  <h1>Arquivos disponíveis</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+      {% for category, message in messages %}
+        <li style="color:
+            {% if category == 'error' %}red
+            {% elif category == 'success' %}green
+            {% elif category == 'info' %}blue
+            {% else %}black{% endif %}">
+          {{ message }}
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <ul>
+    {% for i, nome in arquivos.items() %}
+      <li>
+        {{ nome }}
+        <form action="{{ url_for('iniciar_download', index=i) }}" method="post" style="display:inline">
+          <button type="submit">Baixar</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% if arquivo_para_baixar %}
+    <p>
+      <strong>Arquivo disponível para download:</strong><br>
+      <a href="{{ url_for('download', nome=arquivo_para_baixar) }}">
+        Clique aqui para baixar {{ arquivo_para_baixar }}
+      </a>
+    </p>
+  {% endif %}
+
+
+  <a href="{{ url_for('upload') }}">Enviar novo arquivo</a>
+</body>
+</html>
