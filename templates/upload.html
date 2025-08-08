@@ -5,6 +5,106 @@
   <title>Enviar Arquivo</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+    html, body {
+      height: 100%;
+      background-color: #1e1e2f;
+      color: #f0f0f0;
+    }
+
+    .file-icon {
+      vertical-align: middle;
+      margin-right: 8px;
+      color: #f0f0f0;
+    }
+
+    .table td, .table th {
+      vertical-align: middle;
+      border-color: #3c3c4e;
+    }
+
+    .table thead {
+      background-color: #2a2a40;
+      color: #f0f0f0;
+    }
+
+    .table tbody tr {
+      background-color: #252537;
+      color: #f0f0f0;
+    }
+
+    .table tbody tr:hover {
+      background-color: #33334d;
+    }
+
+    .notification.is-light {
+      background-color: #2a2a40;
+      color: #f0f0f0;
+    }
+
+    .title, .label {
+      color: #ffffff;
+    }
+
+    .button.is-link {
+      background-color: #3370aa;
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .button.is-link:hover {
+      background-color: rgb(34, 73, 153);
+    }
+
+    .button.is-success {
+      background-color: #89c977;
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .button.is-success:hover {
+      background-color: #68945b;
+    }
+
+    .material-icons {
+      vertical-align: middle;
+    }
+
+    .mt-5 {
+      margin-top: 3rem;
+    }
+
+    .table.is-striped tbody tr:nth-child(odd) {
+      background-color: #252537 !important;
+    }
+
+    .table.is-striped tbody tr:nth-child(even) {
+      background-color: #2f2f42 !important;
+    }
+
+    .input, .file-name {
+      background-color: #1e1e2f;
+      color: #f0f0f0;
+      border-color: #3c3c4e;
+    }
+
+    .file-cta {
+      background-color: #3370aa;
+      color: #fff;
+      border: none;
+    }
+
+    .file-cta:hover {
+      background-color: #2e5a90;
+      color: #fff;
+    }
+
+    .file-cta:hover .file-label,
+    .file-cta:hover .file-icon {
+      color: #fff;
+    }
+
+  </style>
 </head>
 <body class="section">
   <div class="container">
@@ -22,33 +122,45 @@
       {% endif %}
     {% endwith %}
 
-    <form method="post" enctype="multipart/form-data" class="box">
+    <form method="post" enctype="multipart/form-data" class="box" style="background-color: #2a2a40;">
       <div class="field">
         <label class="label">Senha</label>
         <div class="control">
-          <input class="input" type="password" name="senha" required>
+          <input class="input" type="password" name="senha" required style="background-color: #1e1e2f; color: #f0f0f0; border-color: #3c3c4e;">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Arquivo</label>
         <div class="control">
-          <input class="input" type="file" name="arquivo" required>
+          <div class="file has-name is-fullwidth">
+            <label class="file-label">
+              <input class="file-input" type="file" name="arquivo" required>
+              <span class="file-cta">
+                <span class="file-icon">
+                  <i class="material-icons">attach_file</i>
+                </span>
+                <span class="file-label">Escolher arquivo…</span>
+              </span>
+              <span class="file-name">Nenhum arquivo selecionado</span>
+            </label>
+          </div>
         </div>
       </div>
 
       <div class="field is-grouped is-grouped-right">
         <div class="control">
-          <input type="submit" class="button is-primary" value="Enviar">
+          <input type="submit" class="button is-link" value="Enviar">
         </div>
       </div>
     </form>
 
-    <div class="has-text-centered mt-4">
-      <a href="{{ url_for('index') }}" class="button is-light">
+    <div class="has-text-centered mt-5">
+      <a href="{{ url_for('index') }}" class="button" style="background-color: #444; color: #fff; border: none;">
         <i class="material-icons">arrow_back</i> Voltar
       </a>
     </div>
+
   </div>
 </body>
 </html>

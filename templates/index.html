@@ -6,16 +6,80 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <style>
+    html, body {
+      height: 100%;
+      background-color: #1e1e2f;
+      color: #f0f0f0;
+    }
+
     .file-icon {
       vertical-align: middle;
       margin-right: 8px;
-      color: #4a4a4a;
+      color: #f0f0f0;
     }
+
     .table td, .table th {
       vertical-align: middle;
+      border-color: #3c3c4e;
     }
-    .is-narrow {
-      white-space: nowrap;
+
+    .table thead {
+      background-color: #2a2a40;
+      color: #f0f0f0;
+    }
+
+    .table tbody tr {
+      background-color: #252537;
+      color: #f0f0f0;
+    }
+
+    .table tbody tr:hover {
+      background-color: #33334d;
+    }
+
+    .notification.is-light {
+      background-color: #2a2a40;
+      color: #f0f0f0;
+    }
+
+    .title {
+      color: #ffffff;
+    }
+
+    .button.is-link {
+      background-color: #3370aa;
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .button.is-link:hover {
+      background-color: rgb(34, 73, 153);
+    }
+
+    .button.is-success {
+      background-color: #89c977;
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .button.is-success:hover {
+      background-color: #68945b;
+    }
+
+    .material-icons {
+      vertical-align: middle;
+    }
+
+    .mt-5 {
+      margin-top: 3rem;
+    }
+
+    .table.is-striped tbody tr:nth-child(odd) {
+      background-color: #252537 !important;
+    }
+
+    .table.is-striped tbody tr:nth-child(even) {
+      background-color: #2f2f42 !important;
     }
   </style>
 </head>
@@ -38,10 +102,10 @@
     <div class="table-container">
       <table class="table is-striped is-fullwidth is-hoverable">
         <thead>
-          <tr>
-            <th>Arquivo</th>
-            <th class="has-text-centered">Ação</th>
-          </tr>
+          <!-- <tr>
+            <th></th>
+            <th class="has-text-centered"></th>
+          </tr> -->
         </thead>
         <tbody>
           {% for i, nome in arquivos.items() %}
